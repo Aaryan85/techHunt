@@ -1,499 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech Hunt: The AI Lockdown</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Share+Tech+Mono&display=swap"
-        rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            /* Prevent scrollbars from flicker during animations */
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Hunt</title>
 
-        .tech-font {
-            font-family: 'Share Tech Mono', monospace;
-        }
+<script src="https://cdn.tailwindcss.com"></script>
 
-        .crt-effect::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            animation: flicker 0.15s infinite;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-        @keyframes flicker {
-            0% {
-                opacity: 0.27861;
-            }
+<style type="text/tailwindcss">
+@layer utilities {
 
-            5% {
-                opacity: 0.34769;
-            }
+  /* CRT Effect */
+  .crt::before {
+    content: "";
+    @apply absolute inset-0 pointer-events-none z-[2];
+    background:
+      linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
+      linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+    background-size: 100% 2px, 3px 100%;
+    animation: flicker 0.15s infinite;
+  }
 
-            10% {
-                opacity: 0.54117;
-            }
+  /* Animations */
+  @keyframes flicker {
+    0%{opacity:.27} 50%{opacity:.69} 100%{opacity:.32}
+  }
 
-            15% {
-                opacity: 0.23604;
-            }
+  @keyframes fadeIn {
+    from {opacity:0; transform:translateY(20px)}
+    to {opacity:1; transform:translateY(0)}
+  }
 
-            20% {
-                opacity: 0.81031;
-            }
+  @keyframes shake {
+    10%,90%{transform:translateX(-1px)}
+    20%,80%{transform:translateX(2px)}
+    30%,50%,70%{transform:translateX(-4px)}
+    40%,60%{transform:translateX(4px)}
+  }
 
-            25% {
-                opacity: 0.50523;
-            }
+  .animate-fade { animation: fadeIn 0.5s ease-in-out }
+  .animate-shake { animation: shake 0.5s }
 
-            30% {
-                opacity: 0.35414;
-            }
+  /* Timer glow */
+  .text-glow {
+    text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
+  }
+}
+</style>
 
-            35% {
-                opacity: 0.1354;
-            }
-
-            40% {
-                opacity: 0.40833;
-            }
-
-            45% {
-                opacity: 0.13155;
-            }
-
-            50% {
-                opacity: 0.69559;
-            }
-
-            55% {
-                opacity: 0.13385;
-            }
-
-            60% {
-                opacity: 0.3011;
-            }
-
-            65% {
-                opacity: 0.85784;
-            }
-
-            70% {
-                opacity: 0.23731;
-            }
-
-            75% {
-                opacity: 0.44978;
-            }
-
-            80% {
-                opacity: 0.19842;
-            }
-
-            85% {
-                opacity: 0.4731;
-            }
-
-            90% {
-                opacity: 0.25343;
-            }
-
-            95% {
-                opacity: 0.8389;
-            }
-
-            100% {
-                opacity: 0.3263;
-            }
-        }
-
-        .challenge-box,
-        .story-box {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        #timer {
-            text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
-        }
-    </style>
 </head>
 
-<body class="bg-gray-900 text-gray-200 min-h-screen flex items-center justify-center p-4 crt-effect">
+<body class="bg-gray-900 text-gray-200 min-h-screen flex items-center justify-center p-3 sm:p-6 font-[Inter] overflow-hidden relative crt">
 
-    <div id="game-container"
-        class="w-full max-w-4xl bg-gray-900 bg-opacity-80 border border-green-500 rounded-lg shadow-2xl shadow-green-500/10 p-4 sm:p-8 relative">
+<div class="w-full max-w-4xl bg-gray-900/80 border border-green-500 rounded-lg shadow-2xl shadow-green-500/10 p-4 sm:p-8 relative">
 
-        <!-- Header -->
-        <div class="text-center mb-4 sm:mb-6 border-b-2 border-green-700 pb-4">
-            <h1 class="text-3xl sm:text-5xl font-bold text-green-400 tech-font tracking-widest">TECH HUNT</h1>
-            <p class="text-green-500 tech-font">The A.I. Lockdown</p>
-        </div>
+  <!-- Header -->
+  <div class="text-center mb-4 sm:mb-6 border-b-2 border-green-700 pb-4">
+    <h1 class="text-2xl sm:text-5xl font-bold text-green-400 font-['Share_Tech_Mono'] tracking-widest">
+      TECH HUNT
+    </h1>
+    <p class="text-green-500 font-['Share_Tech_Mono'] text-sm sm:text-base">
+      The A.I. Lockdown
+    </p>
+  </div>
 
-        <div id="timer-container" class="absolute top-4 right-4 text-center hidden">
-            <span class="text-green-400 tech-font">TIME</span>
-            <div id="timer" class="text-2xl tech-font text-green-400">00:00:00</div>
-        </div>
+  <!-- Timer -->
+  <div class="absolute top-3 right-3 sm:top-4 sm:right-4 text-center hidden" id="timer-container">
+    <span class="text-green-400 font-['Share_Tech_Mono'] text-xs sm:text-sm">TIME</span>
+    <div id="timer" class="text-lg sm:text-2xl font-['Share_Tech_Mono'] text-green-400 text-glow">
+      00:00:00
+    </div>
+  </div>
 
+  <!-- Start Screen -->
+  <div id="start-screen" class="text-center">
+    <h2 class="text-xl sm:text-2xl text-yellow-300 font-['Share_Tech_Mono'] mb-4">
+      SYSTEM ALERT!
+    </h2>
 
-        <!-- Start Screen -->
-        <div id="start-screen" class="text-center">
-            <h2 class="text-2xl text-yellow-300 tech-font mb-4">SYSTEM ALERT!</h2>
-            <p class="mb-6 text-lg">A rogue AI, 'Nyx', has seized control of the college network. All systems are
-                locked. To regain control, you must solve a series of challenges to find Nyx's manual override code.
-                Your team is our only hope. Are you ready?</p>
-            <button id="start-button"
-                class="bg-green-500 text-gray-900 font-bold py-3 px-8 rounded-lg hover:bg-green-400 transition-all duration-300 tech-font text-xl">Initiate
-                Hunt</button>
-        </div>
+    <p class="mb-6 text-base sm:text-lg px-2">
+      A rogue AI, 'Nyx', has seized control...
+    </p>
 
-        <!-- Main Game Content -->
-        <div id="main-game" class="hidden">
-            <!-- Story Box -->
-            <div id="story-box" class="story-box bg-black bg-opacity-50 border border-green-600 p-4 rounded-lg mb-6">
-                <p id="story-text" class="text-lg text-green-300"></p>
-            </div>
+    <button id="start-button"
+      class="bg-green-500 text-gray-900 font-bold py-3 px-6 sm:px-8 rounded-lg hover:bg-green-400 transition-all duration-300 font-['Share_Tech_Mono'] text-lg sm:text-xl w-full sm:w-auto">
+      Initiate Hunt
+    </button>
+  </div>
 
-            <!-- Challenge Box -->
-            <div id="challenge-box"
-                class="challenge-box bg-gray-800 border-2 border-dashed border-green-800 p-4 sm:p-6 rounded-lg">
-                <h2 class="text-xl sm:text-2xl font-bold text-yellow-400 mb-3 tech-font">[ Challenge <span
-                        id="challenge-level">1</span> ]</h2>
-                <p id="challenge-prompt" class="text-base sm:text-lg mb-4"></p>
-                <div class="bg-black text-white p-4 rounded-md tech-font">
-                    <pre><code id="challenge-code"></code></pre>
-                </div>
-            </div>
+  <!-- Main Game -->
+  <div id="main-game" class="hidden">
 
-            <!-- Hint Box -->
-            <div class="mt-4 text-center">
-                <button id="hint-button" class="text-sm text-yellow-400 tech-font hover:underline">[ Request Hint (-2
-                    min) ]</button>
-                <p id="hint-text" class="text-yellow-500 mt-2 hidden"></p>
-            </div>
+    <!-- Story -->
+    <div class="bg-black/50 border border-green-600 p-4 rounded-lg mb-6 animate-fade">
+      <p id="story-text" class="text-green-300 text-sm sm:text-lg"></p>
+    </div>
 
-            <!-- Input Area -->
-            <div class="mt-6 flex flex-col sm:flex-row items-center gap-4">
-                <input type="text" id="answer-input" placeholder="Enter solution key here..."
-                    class="flex-grow w-full sm:w-auto bg-gray-700 border-2 border-green-700 text-green-300 rounded-lg p-3 tech-font focus:outline-none focus:ring-2 focus:ring-green-500">
-                <button id="submit-button"
-                    class="w-full sm:w-auto bg-green-600 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-green-500 transition-all duration-300 tech-font text-lg">Execute</button>
-            </div>
+    <!-- Challenge -->
+    <div class="bg-gray-800 border-2 border-dashed border-green-800 p-4 sm:p-6 rounded-lg animate-fade">
+      <h2 class="text-lg sm:text-2xl font-bold text-yellow-400 mb-3 font-['Share_Tech_Mono']">
+        [ Challenge <span id="challenge-level">1</span> ]
+      </h2>
 
-            <!-- Result Message -->
-            <div id="result-message" class="mt-4 text-center h-8">
-                <!-- Messages will be injected here -->
-            </div>
-        </div>
+      <p id="challenge-prompt" class="mb-4 text-sm sm:text-lg"></p>
 
-        <!-- Win Screen -->
-        <div id="win-screen" class="hidden text-center p-8">
-            <h2 class="text-4xl text-green-400 tech-font mb-4">SYSTEM RESTORED!</h2>
-            <p class="text-xl mb-2">You've successfully shut down Nyx and restored the network.</p>
-            <p class="text-2xl text-yellow-300 tech-font mb-6">Final Time: <span id="final-time"></span></p>
-            <p class="mb-6">Congratulations, Tech Hunters! You saved the day.</p>
-            <button onclick="location.reload()"
-                class="bg-blue-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-400 transition-all duration-300 tech-font text-xl">Play
-                Again</button>
-        </div>
+      <div class="bg-black text-white p-3 sm:p-4 rounded-md font-['Share_Tech_Mono'] text-xs sm:text-sm overflow-x-auto">
+        <pre><code id="challenge-code"></code></pre>
+      </div>
+    </div>
 
+    <!-- Hint -->
+    <div class="mt-4 text-center">
+      <button id="hint-button"
+        class="text-xs sm:text-sm text-yellow-400 font-['Share_Tech_Mono'] hover:underline">
+        [ Request Hint (-2 min) ]
+      </button>
+
+      <p id="hint-text" class="text-yellow-500 mt-2 hidden text-sm"></p>
+    </div>
+
+    <!-- Input -->
+    <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
+
+      <input id="answer-input"
+        placeholder="Enter solution..."
+        class="flex-grow bg-gray-700 border-2 border-green-700 text-green-300 rounded-lg p-3 font-['Share_Tech_Mono'] focus:outline-none focus:ring-2 focus:ring-green-500 w-full"/>
+
+      <button id="submit-button"
+        class="bg-green-600 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-green-500 transition-all duration-300 font-['Share_Tech_Mono'] w-full sm:w-auto">
+        Execute
+      </button>
 
     </div>
 
-    <script>
-        const challenges = [
-            // --- Levels 1-13 are unchanged ---
-            {
-                level: 1,
-                story: "Nyx's first firewall is a simple text scrambler. To find the password for the next layer, you need to reverse the words in its 'access denied' message. Simple, but effective.",
-                prompt: "Reverse the order of the words in the input string.",
-                code: `Input: "ACCESS DENIED: user authentication failed"`,
-                hint: "Split the string into words, reverse the list of words, and join them back.",
-                validate: (answer) => answer.toLowerCase().trim() === "failed authentication user denied: access"
-            },
-            {
-                level: 2,
-                story: "Impressive. Nyx has now encrypted the next clue using a Caesar Cipher. It has moved every letter backwords by 2 places (A becomes C, etc.). The key is the decrypted message.",
-                prompt: "Decrypt the given message. Remember, only letters are shifted ('a' becomes 'y', 'b' becomes 'z').",
-                code: `Encrypted Message: "JEXI17TFSY"`,
-                hint: "To decrypt, you must shift each letter backwards by 2. 'J' becomes 'H'. Handle the wrap-around for 'A' and 'B'.",
-                validate: (answer) => answer.toLowerCase().trim() === "hcvg17rdqw"
-            },
-            {
-                level: 3,
-                story: "You're getting closer! Nyx has hidden the next password within a list of server response codes. The password is the sum of all the prime numbers in the list.",
-                prompt: "Find the sum of all the prime numbers in the given array.",
-                code: `Server Codes: [200, 404, 503, 301, 23, 17, 101, 8, 41]`,
-                hint: "A prime number is only divisible by 1 and itself. Check each number in the list.",
-                validate: (answer) => parseInt(answer, 10) === 685
-            },
-            {
-                level: 4,
-                story: "Nyx is panicking. It has fragmented a critical system file. To intercept the process, you need to identify the most frequently occurring fragment ID. This ID is your next password.",
-                prompt: "Find the character that appears most frequently in the given string.",
-                code: `Fragment Log: "a7b3c7d7e1a7f7g9h7i7jkl7mno7p"`,
-                hint: "Count the occurrences of each character. Which one has the highest count?",
-                validate: (answer) => answer.toString().trim() === "7"
-            },
-            {
-                level: 26,
-                story: "Nyx injected duplicate characters into a log file. The correct key is the string without duplicates.",
-                prompt: "Remove duplicate characters.",
-                code: `"programming"`,
-                hint: "Keep first occurrences only.",
-                validate: (answer) => answer.toLowerCase().trim() === "progamin"
-            },
-            {
-                level: 7,
-                story: "Nyx left behind a string of characters. One command is hidden inside.",
-                prompt: "Find the readable English word in the sequence.",
-                code: "XZQLOGINPKT",
-                hint: "Look for a normal command word.",
-                validate: (answer) => answer.toUpperCase().trim() === "LOGIN"
-            },
-            {
-                level: 8,
-                story: "Access to the main CPU is protected by a file permission lock. Nyx is using a numeric code based on an old operating system's logic. Calculate the code.",
-                prompt: "Convert the symbolic file permissions into their three-digit octal value (e.g., 'rwx' is 7).",
-                code: `Permissions: rwxr-xr--`,
-                hint: "The code is calculated in three parts (user, group, others). r=4, w=2, x=1. Sum them for each part.",
-                validate: (answer) => answer.toString().trim() === "754"
-            },
-            {
-                level: 9,
-                story: "Nyx's logic is becoming unstable, creating paradoxes. You must solve a simple logic gate puzzle to bypass a corrupted memory sector.",
-                prompt: "Determine the final output (0 or 1) of this logic circuit, given the inputs.",
-                code: `Input A = 1, Input B = 0. Circuit: (A AND B) OR (NOT B)`,
-                hint: "Work from the inside out. (1 AND 0) is 0. (NOT 0) is 1. What is (0 OR 1)?",
-                validate: (answer) => answer.toString().trim() === "1"
-            },
-            {
-                level: 10,
-                story: "Nyx scrambled a small math expression in its log file.",
-                prompt: "Evaluate the expression.",
-                code: "12 / 3 + 2 * 4",
-                hint: "Follow BODMAS (order of operations).",
-                validate: (answer) => answer.toString().trim() === "12"
-            },
-            {
-                level: 11,
-                story: "You've traced Nyx's core process. It's hiding on the local machine, using a universally recognized address. The access key is this address, but its components are scrambled.",
-                prompt: "Arrange the following numbers into the standard IPv4 address for 'localhost'.",
-                code: `Address Fragments: 1, 127, 0, 0`,
-                hint: "An IPv4 address has four parts separated by dots. The 'loopback' or 'localhost' address is the ultimate 'home' address for any computer.",
-                validate: (answer) => answer.trim() === "127.0.0.1"
-            },
-            {
-                level: 12,
-                story: "Nyx is shielding its core memory address using a different number system. To access it, you must convert its location back to a format the system can understand.",
-                prompt: "Convert the given Hexadecimal number to a standard Decimal number.",
-                code: `Memory Address: 0xA6`,
-                hint: "Hex is base-16. 'A' represents 10. The formula is (1st digit * 16) + (2nd digit).",
-                validate: (answer) => answer.toString().trim() === "166"
-            },
-            {
-                level: 13,
-                story: "You're through to the core logic. Nyx has deployed a philosophical logic bomb. It's not a question of math, but of understanding. Defuse it with the correct concept.",
-                prompt: "Solve the riddle to identify the concept and disable the trap.",
-                code: `I am the reason for your frustration, and the source of your triumph.
-                 I am always present, but only found when sought. What am I?`,
-                hint: "Think about the fundamental problem-solving process in all programming and technology.",
-                validate: (answer) => answer.toUpperCase().trim() === "BUG"
-            },
-            {
-                level: 14,
-                story: "Nyx locked the override behind a simple binary puzzle.",
-                prompt: "Convert the binary number to decimal.",
-                code: "Binary: 10101",
-                hint: "Each digit represents a power of 2.",
-                validate: (answer) => answer.toString().trim() === "21"
-            },
-             {
-                level: 15,
-                story: "A short logic puzzle guards the shutdown.",
-                prompt: "Evaluate: (1 AND 0) OR (1 XOR 1)",
-                code: "Inputs: A=1, B=0",
-                hint: "Work step by step.",
-                validate: (answer) => answer.toString().trim() === "0"
-            }
-        ];
+    <!-- Result -->
+    <div id="result-message" class="mt-4 text-center h-8 font-['Share_Tech_Mono']"></div>
 
-        let currentLevel = 0;
-        let timerInterval;
-        let seconds = 0;
-        let hintPenalty = 120; // 2 minutes in seconds
+  </div>
 
-        const startScreen = document.getElementById('start-screen');
-        const mainGame = document.getElementById('main-game');
-        const winScreen = document.getElementById('win-screen');
-        const startButton = document.getElementById('start-button');
+</div>
 
-        const storyText = document.getElementById('story-text');
-        const challengeLevel = document.getElementById('challenge-level');
-        const challengePrompt = document.getElementById('challenge-prompt');
-        const challengeCode = document.getElementById('challenge-code');
-        const answerInput = document.getElementById('answer-input');
-        const submitButton = document.getElementById('submit-button');
-        const resultMessage = document.getElementById('result-message');
-
-        const hintButton = document.getElementById('hint-button');
-        const hintText = document.getElementById('hint-text');
-
-        const timerDisplay = document.getElementById('timer');
-        const timerContainer = document.getElementById('timer-container');
-        const finalTimeDisplay = document.getElementById('final-time');
-
-        function startGame() {
-            startScreen.classList.add('hidden');
-            mainGame.classList.remove('hidden');
-            timerContainer.classList.remove('hidden');
-            loadChallenge(currentLevel);
-            startTimer();
-        }
-
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                seconds++;
-                timerDisplay.textContent = formatTime(seconds);
-            }, 1000);
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
-
-        function formatTime(totalSeconds) {
-            const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
-            const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
-            const secs = (totalSeconds % 60).toString().padStart(2, '0');
-            return `${hours}:${minutes}:${secs}`;
-        }
-
-        function loadChallenge(level) {
-            const challenge = challenges[level];
-            storyText.textContent = challenge.story;
-            challengeLevel.textContent = challenge.level;
-            challengePrompt.textContent = challenge.prompt;
-            challengeCode.textContent = challenge.code;
-            answerInput.value = '';
-            hintText.classList.add('hidden');
-            hintButton.classList.remove('hidden');
-            hintButton.disabled = false;
-        }
-
-        function showHint() {
-            hintText.textContent = `[HINT]: ${challenges[currentLevel].hint}`;
-            hintText.classList.remove('hidden');
-            hintButton.classList.add('hidden');
-            seconds += hintPenalty; // Apply penalty
-            timerDisplay.textContent = formatTime(seconds);
-            displayMessage(`Hint revealed. A ${hintPenalty / 60}-minute penalty has been applied.`, 'yellow', 3000);
-
-        }
-
-        function handleSubmit() {
-            const userAnswer = answerInput.value;
-            const challenge = challenges[currentLevel];
-
-            if (challenge.validate(userAnswer)) {
-                displayMessage('Access Granted. Loading next challenge...', 'green');
-                currentLevel++;
-                if (currentLevel < challenges.length) {
-                    setTimeout(() => {
-                        // Add fade out/in effect for transition
-                        mainGame.style.opacity = '0';
-                        setTimeout(() => {
-                            loadChallenge(currentLevel);
-                            mainGame.style.opacity = '1';
-                        }, 500);
-                    }, 1500);
-                } else {
-                    // Game won
-                    stopTimer();
-                    setTimeout(showWinScreen, 1500);
-                }
-            } else {
-                displayMessage('Incorrect Key. System access denied.', 'red', 3000);
-                // Animate input box on wrong answer
-                answerInput.classList.add('animate-shake');
-                setTimeout(() => answerInput.classList.remove('animate-shake'), 500);
-            }
-        }
-
-        function showWinScreen() {
-            mainGame.classList.add('hidden');
-            winScreen.classList.remove('hidden');
-            finalTimeDisplay.textContent = formatTime(seconds);
-        }
-
-        function displayMessage(text, color, duration = 2000) {
-            const colorClasses = {
-                red: 'text-red-500',
-                green: 'text-green-400',
-                yellow: 'text-yellow-400'
-            };
-            resultMessage.textContent = text;
-            resultMessage.className = `mt-4 text-center h-8 tech-font ${colorClasses[color] || 'text-gray-200'}`;
-
-            if (duration) {
-                setTimeout(() => {
-                    resultMessage.textContent = '';
-                }, duration);
-            }
-        }
-
-        // Event Listeners
-        startButton.addEventListener('click', startGame);
-        submitButton.addEventListener('click', handleSubmit);
-        answerInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-                handleSubmit();
-            }
-        });
-        hintButton.addEventListener('click', showHint);
-
-        // Add a simple shake animation for incorrect answers
-        const style = document.createElement('style');
-        style.innerHTML = `
-            .animate-shake {
-                animation: shake 0.5s;
-            }
-            @keyframes shake {
-                10%, 90% { transform: translateX(-1px); }
-                20%, 80% { transform: translateX(2px); }
-                30%, 50%, 70% { transform: translateX(-4px); }
-                40%, 60% { transform: translateX(4px); }
-            }
-        `;
-        document.head.appendChild(style);
-
-    </script>
 </body>
-
 </html>
